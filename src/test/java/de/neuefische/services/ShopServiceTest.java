@@ -1,7 +1,9 @@
 package de.neuefische.services;
 
-import de.neuefische.pojos.Order;
-import de.neuefische.pojos.Product;
+import de.neuefische.products.Bag;
+import de.neuefische.products.Order;
+import de.neuefische.products.Product;
+import de.neuefische.products.Shoe;
 import de.neuefische.repositories.OrderRepo;
 import de.neuefische.repositories.ProductRepo;
 import org.junit.jupiter.api.Assertions;
@@ -137,12 +139,12 @@ class ShopServiceTest {
         // given
         ProductRepo productRepo = createProductRepoWithOneItem();
 
-        Product cup = new Product(0, "Tasse");
-        Product invalidProduct = new Product(3, "Teller");
+        Product superstar = new Shoe(0, "Superstar");
+        Product backpack = new Bag(3, "Rucksack");
 
         List<Product> orderList = new ArrayList<>();
-        orderList.add(cup);
-        orderList.add(invalidProduct);
+        orderList.add(superstar);
+        orderList.add(backpack);
 
         ShopService shop = new ShopService(productRepo, new OrderRepo());
 
@@ -150,7 +152,7 @@ class ShopServiceTest {
             Order actual = shop.addOrder(orderList);
             Assertions.fail();
         } catch (IndexOutOfBoundsException e) {
-            Assertions.assertEquals("Produkt Teller nicht im Shop vorhanden.", e.getMessage());
+            Assertions.assertEquals("Produkt Rucksack nicht im Shop vorhanden.", e.getMessage());
         }
     }
 
@@ -183,12 +185,12 @@ class ShopServiceTest {
     @Test
     void listOrders_RepoHasOrders() {
         // given
-        Product fork = new Product(0, "Gabel");
-        Product cup = new Product(1, "Tasse");
+        Product superstar = new Shoe(0, "Superstar");
+        Product backpack = new Bag(1, "Rucksack");
 
         List<Product> products = new ArrayList<>();
-        products.add(fork);
-        products.add(cup);
+        products.add(superstar);
+        products.add(backpack);
 
         Order order1 = new Order(0, products);
         Order order2 = new Order(1, products);
@@ -223,10 +225,10 @@ class ShopServiceTest {
 
     // helper
     private ProductRepo createProductRepoWithOneItem() {
-        Product cup = new Product(0, "Tasse");
+        Product superstar = new Shoe(0, "Superstar");
 
         List<Product> products = new ArrayList<>();
-        products.add(cup);
+        products.add(superstar);
 
         ProductRepo productRepo = new ProductRepo();
         productRepo.setProducts(products);
@@ -235,9 +237,9 @@ class ShopServiceTest {
 
     private OrderRepo createOrderRepoWithOneItem() {
 
-        Product fork = new Product(0, "Gabel");
+        Product superstar = new Shoe(0, "Superstar");
         List<Product> products = new ArrayList<>();
-        products.add(fork);
+        products.add(superstar);
 
         Order order = new Order(0, products);
         List<Order> orders = new ArrayList<>();
@@ -250,12 +252,12 @@ class ShopServiceTest {
     }
 
     private ProductRepo createProductRepoWithMultipleItems() {
-        Product cup = new Product(0, "Tasse");
-        Product fork = new Product(1, "Gabel");
+        Product superstar = new Shoe(0, "Superstar");
+        Product chucks = new Bag(1, "Rucksack");
 
         List<Product> products = new ArrayList<>();
-        products.add(cup);
-        products.add(fork);
+        products.add(superstar);
+        products.add(chucks);
 
         ProductRepo productRepo = new ProductRepo();
         productRepo.setProducts(products);

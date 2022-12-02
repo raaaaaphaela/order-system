@@ -1,7 +1,7 @@
 package de.neuefische.services;
 
-import de.neuefische.pojos.Order;
-import de.neuefische.pojos.Product;
+import de.neuefische.products.Order;
+import de.neuefische.products.Product;
 import de.neuefische.repositories.OrderRepo;
 import de.neuefische.repositories.ProductRepo;
 import lombok.AllArgsConstructor;

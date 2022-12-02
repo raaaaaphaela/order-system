@@ -1,6 +1,6 @@
 package de.neuefische.repositories;
 
-import de.neuefische.pojos.Product;
+import de.neuefische.products.Product;
 import lombok.Data;
 
 import java.util.List;

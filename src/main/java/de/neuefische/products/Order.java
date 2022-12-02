@@ -1,4 +1,4 @@
-package de.neuefische.pojos;
+package de.neuefische.products;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
