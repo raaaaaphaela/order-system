@@ -15,16 +15,12 @@ public class ProductRepo {
     }
 
     public Product get(int id) {
-        try {
-            if (products != null) {
-                Product product = products.get(id);
-                System.out.println(product);
-                return product;
-            }
-        } catch (IndexOutOfBoundsException e) {
-            System.out.println("Produkt mit der ID: " + id + " nicht vorhanden. Die ID ist zu groß.");
-            return null;
+        if (products != null) {
+            Product product = products.get(id);
+            System.out.println(product);
+            return product;
+        } else {
+            throw new IndexOutOfBoundsException("Produkt mit der ID nicht vorhanden.");
         }
-        return null;
     }
 }

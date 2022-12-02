@@ -14,46 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 class ShopServiceTest {
 
-    private ProductRepo createProductRepoWithOneItem() {
-        Product cup = new Product(0, "Tasse");
-
-        List<Product> products = new ArrayList<>();
-        products.add(cup);
-
-        ProductRepo productRepo = new ProductRepo();
-        productRepo.setProducts(products);
-        return productRepo;
-    }
-
-    private OrderRepo createOrderRepoWithOneItem() {
-
-        Product fork = new Product(0, "Gabel");
-        List<Product> products = new ArrayList<>();
-        products.add(fork);
-
-        Order order = new Order(0, products);
-        List<Order> orders = new ArrayList<>();
-        orders.add(order);
-
-        OrderRepo orderRepo = new OrderRepo();
-        orderRepo.setOrders(orders);
-
-        return orderRepo;
-    }
-
-    private ProductRepo createProductRepoWithMultipleItems() {
-        Product cup = new Product(0, "Tasse");
-        Product fork = new Product(1, "Gabel");
-
-        List<Product> products = new ArrayList<>();
-        products.add(cup);
-        products.add(fork);
-
-        ProductRepo productRepo = new ProductRepo();
-        productRepo.setProducts(products);
-        return productRepo;
-    }
-
     @Test
     void getProduct_WithValidId_ReturnProduct() {
         // given
@@ -69,15 +29,16 @@ class ShopServiceTest {
     }
 
     @Test
-    void getProduct_WithInvalidId_ReturnNull() {
+    void getProduct_WithInvalidId_ThrowException() {
         // given
         ShopService shop = new ShopService(new ProductRepo(), new OrderRepo());
 
-        //when
-        Product actual = shop.getProduct(1);
-
-        // then
-        assertNull(actual);
+        try {
+            Product actual = shop.getProduct(1);
+            Assertions.fail();
+        } catch (IndexOutOfBoundsException e) {
+            Assertions.assertEquals("Produkt mit der ID nicht vorhanden.", e.getMessage());
+        }
     }
 
     @Test
@@ -106,7 +67,7 @@ class ShopServiceTest {
     }
 
     @Test
-    void orderOneProductWithValidId() {
+    void orderOneProduct_WithValidId() {
         // given
         ProductRepo productRepo = createProductRepoWithOneItem();
 
@@ -123,7 +84,23 @@ class ShopServiceTest {
     }
 
     @Test
-    void orderOneProductWithValidId_AndOtherOrdersExists() {
+    void orderOneProduct_WithInvalidId() {
+        // given
+        ProductRepo productRepo = createProductRepoWithOneItem();
+
+        ShopService shop = new ShopService(productRepo, new OrderRepo());
+
+        Order orderTest = new Order(0, productRepo.getProducts());
+
+        // when
+        Order actual = shop.addOrder(productRepo.getProducts());
+
+        // then
+        Assertions.assertEquals(orderTest, actual);
+    }
+
+    @Test
+    void orderOneProduct_WithValidId_AndOtherOrdersExist() {
         // given
         ProductRepo productRepo = createProductRepoWithOneItem();
         OrderRepo orderRepo = createOrderRepoWithOneItem();
@@ -137,11 +114,10 @@ class ShopServiceTest {
 
         // then
         Assertions.assertEquals(orderTest, actual);
-
     }
 
     @Test
-    void orderMultipleProductsWithValidId() {
+    void orderMultipleProducts_WithValidIds() {
         // given
         ProductRepo productRepo = createProductRepoWithMultipleItems();
 
@@ -154,6 +130,28 @@ class ShopServiceTest {
 
         // then
         Assertions.assertEquals(orderTest, actual);
+    }
+
+    @Test
+    void orderMultipleProducts_WithOneInvalidProduct_throwException() {
+        // given
+        ProductRepo productRepo = createProductRepoWithOneItem();
+
+        Product cup = new Product(0, "Tasse");
+        Product invalidProduct = new Product(3, "Teller");
+
+        List<Product> orderList = new ArrayList<>();
+        orderList.add(cup);
+        orderList.add(invalidProduct);
+
+        ShopService shop = new ShopService(productRepo, new OrderRepo());
+
+        try {
+            Order actual = shop.addOrder(orderList);
+            Assertions.fail();
+        } catch (IndexOutOfBoundsException e) {
+            Assertions.assertEquals("Produkt Teller nicht im Shop vorhanden.", e.getMessage());
+        }
     }
 
     @Test
@@ -212,7 +210,7 @@ class ShopServiceTest {
     }
 
     @Test
-    void listOrders_RepoNoOrders() {
+    void listOrders_RepoHasNoOrders_ReturnNull() {
         // given
         ShopService shop = new ShopService(new ProductRepo(), new OrderRepo());
 
@@ -221,5 +219,46 @@ class ShopServiceTest {
 
         // then
         assertNull(actual);
+    }
+
+    // helper
+    private ProductRepo createProductRepoWithOneItem() {
+        Product cup = new Product(0, "Tasse");
+
+        List<Product> products = new ArrayList<>();
+        products.add(cup);
+
+        ProductRepo productRepo = new ProductRepo();
+        productRepo.setProducts(products);
+        return productRepo;
+    }
+
+    private OrderRepo createOrderRepoWithOneItem() {
+
+        Product fork = new Product(0, "Gabel");
+        List<Product> products = new ArrayList<>();
+        products.add(fork);
+
+        Order order = new Order(0, products);
+        List<Order> orders = new ArrayList<>();
+        orders.add(order);
+
+        OrderRepo orderRepo = new OrderRepo();
+        orderRepo.setOrders(orders);
+
+        return orderRepo;
+    }
+
+    private ProductRepo createProductRepoWithMultipleItems() {
+        Product cup = new Product(0, "Tasse");
+        Product fork = new Product(1, "Gabel");
+
+        List<Product> products = new ArrayList<>();
+        products.add(cup);
+        products.add(fork);
+
+        ProductRepo productRepo = new ProductRepo();
+        productRepo.setProducts(products);
+        return productRepo;
     }
 }

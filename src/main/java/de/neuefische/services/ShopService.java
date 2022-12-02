@@ -29,15 +29,15 @@ public class ShopService {
 
         int newOrderId = createNewOrderID();
 
-        List <Product> orderedProducts = new ArrayList<>();
+        List<Product> orderedProducts = new ArrayList<>();
 
-        try {
-            for (Product product : products) {
+        for (Product product : products) {
+            try {
                 orderedProducts.add(productRepo.get(product.getId()));
 
+            } catch (IndexOutOfBoundsException e) {
+                throw new IndexOutOfBoundsException("Produkt " + product.getName() + " nicht im Shop vorhanden.");
             }
-        } catch (IndexOutOfBoundsException e) {
-            return null;
         }
 
         return new Order(newOrderId, orderedProducts);
