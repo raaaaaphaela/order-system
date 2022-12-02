@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class ShopServiceTest {
@@ -27,7 +28,9 @@ class ShopServiceTest {
         Product actual = shop.getProduct(0);
 
         // then
-        Assertions.assertEquals(productRepo.get(0), actual);
+        assertThat(productRepo.get(0))
+                .as("Check if product with valid id is returned")
+                .isEqualTo(actual);
     }
 
     @Test
@@ -35,12 +38,10 @@ class ShopServiceTest {
         // given
         ShopService shop = new ShopService(new ProductRepo(), new OrderRepo());
 
-        try {
+        assertThatThrownBy(() -> {
             Product actual = shop.getProduct(1);
-            Assertions.fail();
-        } catch (IndexOutOfBoundsException e) {
-            Assertions.assertEquals("Produkt mit der ID nicht vorhanden.", e.getMessage());
-        }
+        }).isInstanceOf(IndexOutOfBoundsException.class)
+                .hasMessageContaining("Produkt mit der ID nicht vorhanden.");
     }
 
     @Test
@@ -53,7 +54,7 @@ class ShopServiceTest {
         List<Product> actual = shop.listProducts();
 
         // then
-        Assertions.assertEquals(productRepo.getProducts(), actual);
+        assertThat(productRepo.getProducts()).isEqualTo(actual);
     }
 
     @Test
@@ -65,7 +66,7 @@ class ShopServiceTest {
         List<Product> actual = shop.listProducts();
 
         // then
-        assertNull(actual);
+        assertThat(actual).isNull();
     }
 
     @Test
@@ -81,8 +82,7 @@ class ShopServiceTest {
         Order actual = shop.addOrder(productRepo.getProducts());
 
         // then
-        Assertions.assertEquals(orderTest, actual);
-
+        assertThat(orderTest).isEqualTo(actual);
     }
 
     @Test
@@ -98,11 +98,11 @@ class ShopServiceTest {
         Order actual = shop.addOrder(productRepo.getProducts());
 
         // then
-        Assertions.assertEquals(orderTest, actual);
+        assertThat(orderTest).isEqualTo(actual);
     }
 
     @Test
-    void orderOneProduct_WithValidId_AndOtherOrdersExist() {
+    void orderOneProduct_WithValidProductId_AndOtherOrdersExist() {
         // given
         ProductRepo productRepo = createProductRepoWithOneItem();
         OrderRepo orderRepo = createOrderRepoWithOneItem();
@@ -115,7 +115,7 @@ class ShopServiceTest {
         Order actual = shop.addOrder(productRepo.getProducts());
 
         // then
-        Assertions.assertEquals(orderTest, actual);
+        assertThat(orderTest).isEqualTo(actual);
     }
 
     @Test
@@ -131,7 +131,7 @@ class ShopServiceTest {
         Order actual = shop.addOrder(productRepo.getProducts());
 
         // then
-        Assertions.assertEquals(orderTest, actual);
+        assertThat(orderTest).isEqualTo(actual);
     }
 
     @Test
@@ -148,12 +148,13 @@ class ShopServiceTest {
 
         ShopService shop = new ShopService(productRepo, new OrderRepo());
 
-        try {
+        Throwable thrown = catchThrowable(() -> {
             Order actual = shop.addOrder(orderList);
-            Assertions.fail();
-        } catch (IndexOutOfBoundsException e) {
-            Assertions.assertEquals("Produkt Rucksack nicht im Shop vorhanden.", e.getMessage());
-        }
+        });
+
+        assertThat(thrown)
+                .isInstanceOf(IndexOutOfBoundsException.class)
+                .hasMessageContaining("Produkt Rucksack nicht im Shop vorhanden.");
     }
 
     @Test
